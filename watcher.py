@@ -76,7 +76,7 @@ if __name__== "__main__":
         logger.info("Subscribe")
         client.subscribe("tedge/health/#")
         logger.info("Loop")
-        #client.loop_forever()
+        client.loop_forever()
         logger.info("Starting")
         # Create a thread that will run the check_container_status function
         thread = threading.Thread(target=check_container_status, args=(client,))
