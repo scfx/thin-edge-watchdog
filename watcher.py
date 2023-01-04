@@ -82,7 +82,8 @@ if __name__== "__main__":
         
         # Create a thread that will run the check_container_status function
         thread = threading.Thread(target=check_container_status, args=(client,))
-        # Start the thread        
+        # Start the thread
+        logger.start("Thread")      
         thread.start()
         client.loop_forever()
         
