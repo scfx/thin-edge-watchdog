@@ -73,6 +73,7 @@ if __name__== "__main__":
     try:
         logger.info("Connect")
         client.connect(broker, port)
+        logger.info("Subscribe")
         client.subscribe("tedge/health/#")
         client.loop_forever()
         logger.info("Starting")
