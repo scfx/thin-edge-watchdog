@@ -57,7 +57,7 @@ def check_container_status(client):
     while True:
         # Use the Docker daemon to get a list of all containers
         containers = docker_client.containers.list()
-
+        print(containers)
         # Iterate over the containers, and check their status
         for container in containers:
             client.publish("c8y/s/us",f'102,{container.short_id},docker,{container.name},{container.status}')
