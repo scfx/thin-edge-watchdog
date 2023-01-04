@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger.info('Logger for service watchdog mapper was initialised')
 
 
-broker = '127.0.0.1'
+broker = 'localhost'
 port = 1883
 client_id = 'watchdog-service-mapper-client'
 
@@ -66,7 +66,7 @@ def check_container_status(client):
 
 
 client.on_connect = on_connect
-client.on_message = on_message
+#client.on_message = on_message
 client.on_disconnect = on_disconnect
 
 if __name__== "__main__":
@@ -74,7 +74,7 @@ if __name__== "__main__":
         logger.info("Connect")
         client.connect(broker, port)
         logger.info("Subscribe")
-        client.subscribe("tedge/health/#")
+        #client.subscribe("tedge/health/#")
         logger.info("Loop")
         client.loop_forever()
         logger.info("Starting")
