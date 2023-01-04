@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger.info('Logger for service watchdog mapper was initialised')
 
 
-broker = 'localhost'
+broker = '127.0.0.1'
 port = 1883
 client_id = 'watchdog-service-mapper-client'
 
