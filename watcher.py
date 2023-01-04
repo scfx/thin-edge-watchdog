@@ -24,7 +24,7 @@ client = mqtt_client.Client(client_id)
 def on_message(client, userdata, msg):
     try:
         message = json.loads(msg.payload)
-
+        print(message)
         pid = message['pid']
         logger.debug(f'Pid is: {pid}')
 
