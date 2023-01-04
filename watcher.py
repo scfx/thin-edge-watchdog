@@ -71,6 +71,7 @@ client.on_disconnect = on_disconnect
 
 if __name__== "__main__":
     try:
+        logger.info("Connect")
         client.connect(broker, port)
         client.subscribe("tedge/health/#")
         client.loop_forever()
