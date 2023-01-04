@@ -57,12 +57,13 @@ def check_container_status(client):
     
     while True:
         # Use the Docker daemon to get a list of all containers
-        containers = docker_client.containers.list()
+        containers = docker_client.containers.list(all=True)
         print(containers)
         # Iterate over the containers, and check their status
         for container in containers:
-            client.publish("c8y/s/us",f'102,{container.short_id},docker,{container.name},{container.status}')
-            logger.info(f'Send message 102,{container.short_id},docker,{container.name},{container.status} to topic c8y/s/us')
+            status = 'up' if container.status == 'running' else 'down'
+            client.publish("c8y/s/us",f'102,{container.short_id},docker,{container.name},{status}')
+            logger.info(f'Send message 102,{container.short_id},docker,{container.name},{status} to topic c8y/s/us')
     # Sleep for 60 seconds before checking the status again
         time.sleep(60)
 
