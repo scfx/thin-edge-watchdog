@@ -82,7 +82,7 @@ if __name__== "__main__":
         thread = threading.Thread(target=check_container_status, args=(client,))
         # Start the thread
         logger.info("Start docker loop")
-        thread.start()
+        #thread.start()
         
             
     except KeyboardInterrupt:
