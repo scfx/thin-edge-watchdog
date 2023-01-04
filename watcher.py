@@ -52,8 +52,9 @@ def on_disconnect(client, userdata, rc):
 
 def check_container_status(client):
     # Connect to the Docker daemon
-    docker_client = docker.from_env()
     logger.info("Start docker loop")
+    docker_client = docker.from_env()
+    
     while True:
         # Use the Docker daemon to get a list of all containers
         containers = docker_client.containers.list()
@@ -81,8 +82,7 @@ if __name__== "__main__":
         logger.info("Starting")
         # Create a thread that will run the check_container_status function
         thread = threading.Thread(target=check_container_status, args=(client,))
-        # Start the thread
-        
+        # Start the thread        
         thread.start()
         
             
