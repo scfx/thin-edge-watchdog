@@ -50,22 +50,50 @@ def on_disconnect(client, userdata, rc):
         logger.warning("Unexpected MQTT disconnection. Will auto-reconnect")
     pass
 
+def getCpuLoad(stats):
+    #https://docs.docker.com/engine/api/v1.40/#tag/Container/operation/ContainerStats
+    cpu_delta = stats["cpu_stats"]["cpu_usage"]["total_usage"] - stats["precpu_stats"]["cpu_usage"]["total_usage"]
+    system_cpu_delta = stats["cpu_stats"]["system_cpu_usage"] - stats["precpu_stats"]["system_cpu_usage"]
+    number_cpus = stats["cpu_stats"]["online_cpus"]
+    return (cpu_delta / system_cpu_delta) * number_cpus * 100.0
+
+def getMemoryUsage(stats):
+    #https://docs.docker.com/engine/api/v1.40/#tag/Container/operation/ContainerStats
+    used_memory = stats["memory_stats"]["usage"] - stats["memory_stats"]["stats"]["cache"]
+    available_memory = stats["memory_stats"]["limit"]
+    return (used_memory / available_memory) * 100.0
+
 def check_container_status(client):
     # Connect to the Docker daemon
     logger.info("Start docker loop")
     docker_client = docker.from_env()
-    
+
     while True:
         # Use the Docker daemon to get a list of all containers
-        containers = docker_client.containers.list(all=True)
-        print(containers)
+        
         # Iterate over the containers, and check their status
+        containers = docker_client.containers.list(all=True)
         for container in containers:
             status = 'up' if container.status == 'running' else 'down'
             client.publish("c8y/s/us",f'102,{container.short_id},docker,{container.name},{status}')
             logger.info(f'Send message 102,{container.short_id},docker,{container.name},{status} to topic c8y/s/us')
+            if status == 'up':
+                stats = container.stats(stream=False)
+                topic = f'tedge/measurements/{container.short_id}' #
+                message = f'{{"cpu":{{"%":{getCpuLoad(stats)}}},"memory":{{"%":{getMemoryUsage(stats)}}}}}'
+                client.publish(topic,message)
+                logger.info(f'Send message {message} to {topic}')
+            #logger.info(f'Send message 104,{status} to topic c8y/s/us/{container.short_id}')
     # Sleep for 60 seconds before checking the status again
+        # for log in container.attach(stdout=False, stderr=True,stream=True):
+        #     if "ERROR" in str(log):
+        #         print(log)
+        #     if "WARNING" in str(log):
+        #         print(log)
+            
         time.sleep(60)
+
+
 
 
 client.on_connect = on_connect
